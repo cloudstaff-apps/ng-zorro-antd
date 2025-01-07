@@ -1,0 +1,15 @@
+.ant-btn-group{
+  border-radius: 20px 0px 0px 20px;
+}
+
+.ant-btn-group .ant-btn:first-child{
+  border-radius: 20px 0px 0px 20px !important;
+}
+
+.ant-btn-group .ant-btn:last-child{
+  border-radius: 0px 20px 20px 0px !important;
+}
+
+.ant-btn-primary {
+  background-color: black;
+}

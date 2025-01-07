@@ -34,14 +34,8 @@
                 "output": "/assets/vs/"
               }
             ],
-            "styles": [
-              "site/doc/styles.less"
-            ],
-            "allowedCommonJsDependencies": [
-              "codesandbox",
-              "codesandbox-import-utils",
-              "@ant-design/colors"
-            ],
+            "styles": ["site/doc/styles.less", "style.css"],
+            "allowedCommonJsDependencies": ["codesandbox", "codesandbox-import-utils", "@ant-design/colors"],
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
@@ -160,9 +154,7 @@
                 "output": "/assets/"
               }
             ],
-            "styles": [
-              "components/ng-zorro-antd.less"
-            ],
+            "styles": ["components/ng-zorro-antd.less"],
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
@@ -259,10 +251,7 @@
           "builder": "@angular-eslint/builder:lint",
           "options": {
             "fix": true,
-            "lintFilePatterns": [
-              "components/**/*.ts",
-              "components/**/*.html"
-            ]
+            "lintFilePatterns": ["components/**/*.ts", "components/**/*.html"]
           }
         }
       }

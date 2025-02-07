@@ -27,6 +27,7 @@ export default {
       weekPlaceholder: 'Select week',
       rangePlaceholder: ['Start date', 'End date'],
       rangeYearPlaceholder: ['Start year', 'End year'],
+      rangeQuarterPlaceholder: ['Start quarter', 'End quarter'],
       rangeMonthPlaceholder: ['Start month', 'End month'],
       rangeWeekPlaceholder: ['Start week', 'End week'],
       locale: 'en_US',
@@ -177,5 +178,19 @@ export default {
   },
   Image: {
     preview: 'Preview'
+  },
+  CronExpression: {
+    cronError: 'Invalid cron expression',
+    second: 'second',
+    minute: 'minute',
+    hour: 'hour',
+    day: 'day',
+    month: 'month',
+    week: 'week'
+  },
+  QRCode: {
+    expired: 'QR code expired',
+    refresh: 'Refresh',
+    scanned: 'Scanned'
   }
 };

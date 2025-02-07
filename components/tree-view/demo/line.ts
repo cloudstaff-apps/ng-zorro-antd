@@ -1,7 +1,10 @@
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { AfterViewInit, Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
-import { NzTreeFlatDataSource, NzTreeFlattener } from 'ng-zorro-antd/tree-view';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzTreeFlatDataSource, NzTreeFlattener, NzTreeViewModule } from 'ng-zorro-antd/tree-view';
 
 interface TreeNode {
   name: string;
@@ -43,15 +46,18 @@ interface FlatNode {
 
 @Component({
   selector: 'nz-demo-tree-view-line',
+  imports: [FormsModule, NzIconModule, NzSwitchModule, NzTreeViewModule],
   template: `
     Show Leaf Icon:
     <nz-switch [(ngModel)]="showLeafIcon"></nz-switch>
 
     <nz-tree-view [nzTreeControl]="treeControl" [nzDataSource]="dataSource">
       <nz-tree-node *nzTreeNodeDef="let node" nzTreeNodeIndentLine>
-        <nz-tree-node-toggle nzTreeNodeNoopToggle *ngIf="showLeafIcon">
-          <i nz-icon nzType="file" nzTheme="outline"></i>
-        </nz-tree-node-toggle>
+        @if (showLeafIcon) {
+          <nz-tree-node-toggle nzTreeNodeNoopToggle>
+            <nz-icon nzType="file" nzTheme="outline" />
+          </nz-tree-node-toggle>
+        }
         <nz-tree-node-option>
           {{ node.name }}
         </nz-tree-node-option>
@@ -59,7 +65,11 @@ interface FlatNode {
 
       <nz-tree-node *nzTreeNodeDef="let node; when: hasChild" nzTreeNodeIndentLine>
         <nz-tree-node-toggle>
-          <i nz-icon [nzType]="treeControl.isExpanded(node) ? 'minus-square' : 'plus-square'" nzTheme="outline"></i>
+          <span
+            nz-icon
+            [nzType]="treeControl.isExpanded(node) ? 'minus-square' : 'plus-square'"
+            nzTheme="outline"
+          ></span>
         </nz-tree-node-toggle>
         <nz-tree-node-option>
           {{ node.name }}
@@ -90,6 +100,7 @@ export class NzDemoTreeViewLineComponent implements AfterViewInit {
   dataSource = new NzTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
   showLeafIcon = false;
+
   constructor() {
     this.dataSource.setData(TREE_DATA);
   }
@@ -98,9 +109,5 @@ export class NzDemoTreeViewLineComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.treeControl.expandAll();
-  }
-
-  getNode(name: string): FlatNode | null {
-    return this.treeControl.dataNodes.find(n => n.name === name) || null;
   }
 }

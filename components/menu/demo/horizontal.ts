@@ -1,15 +1,19 @@
 import { Component } from '@angular/core';
 
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzMenuModule } from 'ng-zorro-antd/menu';
+
 @Component({
   selector: 'nz-demo-menu-horizontal',
+  imports: [NzIconModule, NzMenuModule],
   template: `
     <ul nz-menu nzMode="horizontal">
       <li nz-menu-item nzSelected>
-        <i nz-icon nzType="mail"></i>
+        <nz-icon nzType="mail" />
         Navigation One
       </li>
       <li nz-menu-item nzDisabled>
-        <i nz-icon nzType="appstore"></i>
+        <nz-icon nzType="appstore" />
         Navigation Two
       </li>
       <li nz-submenu nzTitle="Navigation Three - Submenu" nzIcon="setting">
@@ -25,6 +29,12 @@ import { Component } from '@angular/core';
               <li nz-menu-item>Option 3</li>
               <li nz-menu-item>Option 4</li>
               <li nz-submenu nzTitle="Sub Menu">
+                <ul>
+                  <li nz-menu-item nzDisabled>Option 5</li>
+                  <li nz-menu-item>Option 6</li>
+                </ul>
+              </li>
+              <li nz-submenu nzTitle="Click me" [nzTriggerSubMenuAction]="'click'">
                 <ul>
                   <li nz-menu-item nzDisabled>Option 5</li>
                   <li nz-menu-item>Option 6</li>

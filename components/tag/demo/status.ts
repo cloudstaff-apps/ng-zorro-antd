@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
 
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+
 @Component({
   selector: 'nz-demo-tag-status',
+  imports: [NzIconModule, NzTagModule],
   template: `
     <div>
       <h4>Without icon</h4>
@@ -14,23 +18,23 @@ import { Component } from '@angular/core';
     <div>
       <h4>With icon</h4>
       <nz-tag nzColor="success">
-        <i nz-icon nzType="check-circle"></i>
+        <nz-icon nzType="check-circle" />
         <span>success</span>
       </nz-tag>
       <nz-tag nzColor="processing">
-        <i nz-icon nzType="sync" nzSpin></i>
+        <nz-icon nzType="sync" nzSpin />
         <span>processing</span>
       </nz-tag>
       <nz-tag nzColor="error">
-        <i nz-icon nzType="close-circle"></i>
+        <nz-icon nzType="close-circle" />
         <span>error</span>
       </nz-tag>
       <nz-tag nzColor="warning">
-        <i nz-icon nzType="exclamation-circle"></i>
+        <nz-icon nzType="exclamation-circle" />
         <span>warning</span>
       </nz-tag>
       <nz-tag nzColor="default">
-        <i nz-icon nzType="clock-circle"></i>
+        <nz-icon nzType="clock-circle" />
         <span>default</span>
       </nz-tag>
     </div>

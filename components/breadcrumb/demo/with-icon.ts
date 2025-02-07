@@ -1,15 +1,19 @@
 import { Component } from '@angular/core';
 
+import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+
 @Component({
   selector: 'nz-demo-breadcrumb-with-icon',
+  imports: [NzBreadCrumbModule, NzIconModule],
   template: `
     <nz-breadcrumb>
       <nz-breadcrumb-item>
-        <i nz-icon nzType="home"></i>
+        <nz-icon nzType="home" />
       </nz-breadcrumb-item>
       <nz-breadcrumb-item>
         <a>
-          <i nz-icon nzType="user"></i>
+          <nz-icon nzType="user" />
           <span>Application List</span>
         </a>
       </nz-breadcrumb-item>

@@ -3,22 +3,22 @@
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
 
-import { findInputsOnElementWithTag, Migration, ResolvedResource, TargetVersion, UpgradeData } from '@angular/cdk/schematics';
+import { findInputsOnElementWithTag, Migration, ResolvedResource, UpgradeData } from '@angular/cdk/schematics';
 
 export class CarouselTemplateRule extends Migration<UpgradeData> {
 
-  enabled = this.targetVersion === TargetVersion.V9;
+  enabled = false;
 
   visitTemplate(template: ResolvedResource): void {
 
     findInputsOnElementWithTag(template.content, 'nzVertical', ['nz-carousel'])
-    .forEach(offset => {
-      this.failures.push({
-        filePath: template.filePath,
-        position: template.getCharacterAndLineOfPosition(offset),
-        message: `Found deprecated "[nzVertical]" input. Use "[nzDotPosition]" to instead please.`
+      .forEach(offset => {
+        this.failures.push({
+          filePath: template.filePath,
+          position: template.getCharacterAndLineOfPosition(offset),
+          message: `Found deprecated "[nzVertical]" input. Use "[nzDotPosition]" to instead please.`
+        });
       });
-    });
 
   }
 }

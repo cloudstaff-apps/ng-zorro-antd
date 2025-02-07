@@ -14,7 +14,6 @@ import {
   OnChanges,
   OnDestroy,
   OnInit,
-  Optional,
   Output,
   Renderer2,
   SimpleChanges,
@@ -29,6 +28,7 @@ import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { toNumber } from 'ng-zorro-antd/core/util';
 import { NzPaginationI18nInterface } from 'ng-zorro-antd/i18n';
 
+import { NzPaginationItemComponent } from './pagination-item.component';
 import { PaginationItemRenderContext } from './pagination.types';
 
 @Component({
@@ -38,31 +38,36 @@ import { PaginationItemRenderContext } from './pagination.types';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ng-template #containerTemplate>
-      <li
-        nz-pagination-item
-        [attr.title]="locale.prev_page"
-        [disabled]="isFirstIndex"
-        [direction]="dir"
-        (click)="prePage()"
-        type="prev"
-        [itemRender]="itemRender"
-      ></li>
-      <li [attr.title]="pageIndex + '/' + lastIndex" class="ant-pagination-simple-pager">
-        <input [disabled]="disabled" [value]="pageIndex" (keydown.enter)="jumpToPageViaInput($event)" size="3" />
-        <span class="ant-pagination-slash">/</span>
-        {{ lastIndex }}
-      </li>
-      <li
-        nz-pagination-item
-        [attr.title]="locale?.next_page"
-        [disabled]="isLastIndex"
-        [direction]="dir"
-        (click)="nextPage()"
-        type="next"
-        [itemRender]="itemRender"
-      ></li>
+      <ul>
+        <li
+          nz-pagination-item
+          [locale]="locale"
+          [attr.title]="locale.prev_page"
+          [disabled]="isFirstIndex"
+          [direction]="dir"
+          (click)="prePage()"
+          type="prev"
+          [itemRender]="itemRender"
+        ></li>
+        <li [attr.title]="pageIndex + '/' + lastIndex" class="ant-pagination-simple-pager">
+          <input [disabled]="disabled" [value]="pageIndex" (keydown.enter)="jumpToPageViaInput($event)" size="3" />
+          <span class="ant-pagination-slash">/</span>
+          {{ lastIndex }}
+        </li>
+        <li
+          nz-pagination-item
+          [locale]="locale"
+          [attr.title]="locale?.next_page"
+          [disabled]="isLastIndex"
+          [direction]="dir"
+          (click)="nextPage()"
+          type="next"
+          [itemRender]="itemRender"
+        ></li>
+      </ul>
     </ng-template>
-  `
+  `,
+  imports: [NzPaginationItemComponent]
 })
 export class NzPaginationSimpleComponent implements OnChanges, OnDestroy, OnInit {
   @ViewChild('containerTemplate', { static: true }) template!: TemplateRef<NzSafeAny>;
@@ -84,7 +89,7 @@ export class NzPaginationSimpleComponent implements OnChanges, OnDestroy, OnInit
     private cdr: ChangeDetectorRef,
     private renderer: Renderer2,
     private elementRef: ElementRef,
-    @Optional() private directionality: Directionality
+    private directionality: Directionality
   ) {
     renderer.removeChild(renderer.parentNode(elementRef.nativeElement), elementRef.nativeElement);
   }

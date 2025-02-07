@@ -3,13 +3,13 @@
  * found in the LICENSE file at https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/LICENSE
  */
 
-import { Migration, ResolvedResource, TargetVersion, UpgradeData } from '@angular/cdk/schematics';
+import { Migration, ResolvedResource, UpgradeData } from '@angular/cdk/schematics';
 
 import { findElementWithClassName } from '../../../utils/ng-update/elements';
 
 export class IconTemplateRule extends Migration<UpgradeData> {
 
-  enabled = this.targetVersion === TargetVersion.V9;
+  enabled = false;
 
   visitTemplate(template: ResolvedResource): void {
 
@@ -18,7 +18,7 @@ export class IconTemplateRule extends Migration<UpgradeData> {
         this.failures.push({
           filePath: template.filePath,
           position: template.getCharacterAndLineOfPosition(offset),
-          message: `Found deprecated css selector "i.anticon" component. Use "i[nz-icon]" to instead please.`
+          message: `Found deprecated css selector "i.anticon" component. Use "<nz-icon>" to instead please.`
         });
       })
 

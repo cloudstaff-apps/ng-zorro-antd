@@ -1,21 +1,24 @@
 import { Component } from '@angular/core';
 
+import { NzIconModule } from 'ng-zorro-antd/icon';
+
 @Component({
   selector: 'nz-demo-icon-basic',
+  imports: [NzIconModule],
   template: `
     <div class="icons-list">
-      <i nz-icon [nzType]="'home'"></i>
-      <i nz-icon [nzType]="'setting'" [nzTheme]="'fill'"></i>
-      <i nz-icon [nzType]="'smile'" [nzTheme]="'outline'"></i>
-      <i nz-icon [nzType]="'sync'" [nzSpin]="true"></i>
-      <i nz-icon [nzType]="'smile'" [nzTheme]="'outline'" [nzRotate]="180"></i>
+      <nz-icon nzType="home" />
+      <nz-icon nzType="setting" nzTheme="fill" />
+      <nz-icon nzType="smile" nzTheme="outline" />
+      <nz-icon nzType="sync" [nzSpin]="true" />
+      <nz-icon nzType="smile" nzTheme="outline" [nzRotate]="180" />
       <!-- Loading with new API would spin automatically! -->
-      <i nz-icon [nzType]="'loading'"></i>
+      <nz-icon nzType="loading" />
     </div>
   `,
   styles: [
     `
-      [nz-icon] {
+      nz-icon {
         margin-right: 6px;
         font-size: 24px;
       }

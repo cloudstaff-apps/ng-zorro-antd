@@ -37,6 +37,10 @@ export const POSITION_MAP = {
   )
 };
 export type POSITION_TYPE = keyof typeof POSITION_MAP;
+export type POSITION_TYPE_HORIZONTAL = Extract<
+  POSITION_TYPE,
+  'bottomLeft' | 'bottomCenter' | 'bottomRight' | 'topLeft' | 'topCenter' | 'topRight'
+>;
 
 export const DEFAULT_TOOLTIP_POSITIONS = [POSITION_MAP.top, POSITION_MAP.right, POSITION_MAP.bottom, POSITION_MAP.left];
 
@@ -44,9 +48,7 @@ export const DEFAULT_CASCADER_POSITIONS = [
   POSITION_MAP.bottomLeft,
   POSITION_MAP.bottomRight,
   POSITION_MAP.topLeft,
-  POSITION_MAP.topRight,
-  POSITION_MAP.topCenter,
-  POSITION_MAP.bottomCenter
+  POSITION_MAP.topRight
 ];
 
 export const DEFAULT_MENTION_TOP_POSITIONS = [

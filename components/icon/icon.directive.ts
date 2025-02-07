@@ -7,45 +7,40 @@ import {
   AfterContentChecked,
   ChangeDetectorRef,
   Directive,
-  ElementRef,
   Input,
   NgZone,
   OnChanges,
   OnDestroy,
-  OnInit,
-  Optional,
   Renderer2,
-  SimpleChanges
+  SimpleChanges,
+  booleanAttribute,
+  inject,
+  numberAttribute
 } from '@angular/core';
-import { from, Subject } from 'rxjs';
+import { Subject, from } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { IconDirective, ThemeType } from '@ant-design/icons-angular';
 
 import { warn } from 'ng-zorro-antd/core/logger';
-import { BooleanInput } from 'ng-zorro-antd/core/types';
-import { InputBoolean } from 'ng-zorro-antd/core/util';
 
 import { NzIconPatchService, NzIconService } from './icon.service';
 
 @Directive({
-  selector: '[nz-icon]',
+  selector: 'nz-icon,[nz-icon]',
   exportAs: 'nzIcon',
   host: {
-    '[class.anticon]': 'true'
+    class: 'anticon'
   }
 })
-export class NzIconDirective extends IconDirective implements OnInit, OnChanges, AfterContentChecked, OnDestroy {
-  static ngAcceptInputType_nzSpin: BooleanInput;
-
+export class NzIconDirective extends IconDirective implements OnChanges, AfterContentChecked, OnDestroy {
   cacheClassName: string | null = null;
-  @Input()
-  @InputBoolean()
+  @Input({ transform: booleanAttribute })
   set nzSpin(value: boolean) {
     this.spin = value;
   }
 
-  @Input() nzRotate: number = 0;
+  @Input({ transform: numberAttribute }) nzRotate: number = 0;
 
   @Input()
   set nzType(value: string) {
@@ -78,18 +73,17 @@ export class NzIconDirective extends IconDirective implements OnInit, OnChanges,
   constructor(
     private readonly ngZone: NgZone,
     private readonly changeDetectorRef: ChangeDetectorRef,
-    elementRef: ElementRef,
     public readonly iconService: NzIconService,
-    public readonly renderer: Renderer2,
-    @Optional() iconPatch: NzIconPatchService
+    public readonly renderer: Renderer2
   ) {
-    super(iconService, elementRef, renderer);
+    super(iconService);
 
+    const iconPatch = inject(NzIconPatchService, { optional: true });
     if (iconPatch) {
       iconPatch.doPatch();
     }
 
-    this.el = elementRef.nativeElement;
+    this.el = this._elementRef.nativeElement;
   }
 
   override ngOnChanges(changes: SimpleChanges): void {
@@ -102,10 +96,6 @@ export class NzIconDirective extends IconDirective implements OnInit, OnChanges,
     } else {
       this._setSVGElement(this.iconService.createIconfontIcon(`#${this.iconfont}`));
     }
-  }
-
-  ngOnInit(): void {
-    this.renderer.setAttribute(this.el, 'class', `anticon ${this.el.className}`.trim());
   }
 
   /**
@@ -136,23 +126,32 @@ export class NzIconDirective extends IconDirective implements OnInit, OnChanges,
   private changeIcon2(): void {
     this.setClassName();
 
-    // We don't need to re-enter the Angular zone for adding classes or attributes through the renderer.
+    // The Angular zone is left deliberately before the SVG is set
+    // since `_changeIcon` spawns asynchronous tasks as promise and
+    // HTTP calls. This is used to reduce the number of change detections
+    // while the icon is being loaded dynamically.
     this.ngZone.runOutsideAngular(() => {
       from(this._changeIcon())
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: svgOrRemove => {
-            // The _changeIcon method would call Renderer to remove the element of the old icon,
-            // which would call `markElementAsRemoved` eventually,
-            // so we should call `detectChanges` to tell Angular remove the DOM node.
-            // #7186
-            this.changeDetectorRef.detectChanges();
+            // Get back into the Angular zone after completing all the tasks.
+            // Since we manually run change detection locally, we have to re-enter
+            // the zone because the change detection might also be run on other local
+            // components, leading them to handle template functions outside of the Angular zone.
+            this.ngZone.run(() => {
+              // The _changeIcon method would call Renderer to remove the element of the old icon,
+              // which would call `markElementAsRemoved` eventually,
+              // so we should call `detectChanges` to tell Angular remove the DOM node.
+              // #7186
+              this.changeDetectorRef.detectChanges();
 
-            if (svgOrRemove) {
-              this.setSVGData(svgOrRemove);
-              this.handleSpin(svgOrRemove);
-              this.handleRotate(svgOrRemove);
-            }
+              if (svgOrRemove) {
+                this.setSVGData(svgOrRemove);
+                this.handleSpin(svgOrRemove);
+                this.handleRotate(svgOrRemove);
+              }
+            });
           },
           error: warn
         });

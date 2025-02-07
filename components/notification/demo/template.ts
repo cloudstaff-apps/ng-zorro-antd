@@ -1,11 +1,14 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 
+import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 
 @Component({
   selector: 'nz-demo-notification-template',
+  imports: [NzButtonModule, NzTagModule],
   template: `
-    <button nz-button [nzType]="'primary'" (click)="ninja()">Open the notification box</button>
+    <button nz-button nzType="primary" (click)="createNotification()">Open the notification box</button>
     <ng-template let-fruit="data">
       It's a
       <nz-tag [nzColor]="fruit.color">{{ fruit.name }}</nz-tag>
@@ -23,7 +26,9 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 export class NzDemoNotificationTemplateComponent {
   @ViewChild(TemplateRef, { static: false }) template?: TemplateRef<{}>;
 
-  ninja(): void {
+  constructor(private notificationService: NzNotificationService) {}
+
+  createNotification(): void {
     const fruits = [
       { name: 'Apple', color: 'red' },
       { name: 'Orange', color: 'orange' },
@@ -34,6 +39,4 @@ export class NzDemoNotificationTemplateComponent {
       this.notificationService.template(this.template!, { nzData: fruit });
     });
   }
-
-  constructor(private notificationService: NzNotificationService) {}
 }

@@ -15,25 +15,24 @@ import {
   NgZone,
   OnChanges,
   OnInit,
-  Optional,
   Output,
   QueryList,
   SimpleChanges,
   TemplateRef,
   ViewEncapsulation
 } from '@angular/core';
-import { merge, Subscription } from 'rxjs';
+import { Subscription, merge } from 'rxjs';
 import { startWith, takeUntil } from 'rxjs/operators';
 
 import { NzDestroyService } from 'ng-zorro-antd/core/services';
-import { BooleanInput, NgClassType, NzSizeDSType } from 'ng-zorro-antd/core/types';
+import { BooleanInput, NzSizeDSType } from 'ng-zorro-antd/core/types';
 import { toBoolean } from 'ng-zorro-antd/core/util';
 
 import { NzStepComponent } from './step.component';
 
 export type NzDirectionType = 'horizontal' | 'vertical';
 export type NzStatusType = 'wait' | 'process' | 'finish' | 'error';
-export type nzProgressDotTemplate = TemplateRef<{ $implicit: TemplateRef<void>; status: string; index: number }>;
+export type NzProgressDotTemplate = TemplateRef<{ $implicit: TemplateRef<void>; status: string; index: number }>;
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,15 +40,23 @@ export type nzProgressDotTemplate = TemplateRef<{ $implicit: TemplateRef<void>; 
   preserveWhitespaces: false,
   selector: 'nz-steps',
   exportAs: 'nzSteps',
-  template: `
-    <div class="ant-steps" [ngClass]="classMap">
-      <ng-content></ng-content>
-    </div>
-  `,
+  template: `<ng-content></ng-content>`,
+  host: {
+    class: 'ant-steps',
+    '[class.ant-steps-horizontal]': `nzDirection === 'horizontal'`,
+    '[class.ant-steps-vertical]': `nzDirection === 'vertical'`,
+    '[class.ant-steps-label-horizontal]': `nzDirection === 'horizontal'`,
+    '[class.ant-steps-label-vertical]': `(showProcessDot || nzLabelPlacement === 'vertical') && nzDirection === 'horizontal'`,
+    '[class.ant-steps-dot]': 'showProcessDot',
+    '[class.ant-steps-small]': `nzSize === 'small'`,
+    '[class.ant-steps-navigation]': `nzType === 'navigation'`,
+    '[class.ant-steps-rtl]': `dir === 'rtl'`,
+    '[class.ant-steps-with-progress]': 'showProgress'
+  },
   providers: [NzDestroyService]
 })
 export class NzStepsComponent implements OnChanges, OnInit, AfterContentInit {
-  static ngAcceptInputType_nzProgressDot: BooleanInput | nzProgressDotTemplate | undefined | null;
+  static ngAcceptInputType_nzProgressDot: BooleanInput | NzProgressDotTemplate | undefined | null;
 
   @ContentChildren(NzStepComponent) steps!: QueryList<NzStepComponent>;
 
@@ -62,7 +69,7 @@ export class NzStepsComponent implements OnChanges, OnInit, AfterContentInit {
   @Input() nzStatus: NzStatusType = 'process';
 
   @Input()
-  set nzProgressDot(value: boolean | nzProgressDotTemplate) {
+  set nzProgressDot(value: boolean | NzProgressDotTemplate | undefined | null) {
     if (value instanceof TemplateRef) {
       this.showProcessDot = true;
       this.customProcessDotTemplate = value;
@@ -79,36 +86,28 @@ export class NzStepsComponent implements OnChanges, OnInit, AfterContentInit {
   showProcessDot = false;
   showProgress = false;
   customProcessDotTemplate?: TemplateRef<{ $implicit: TemplateRef<void>; status: string; index: number }>;
-  classMap: NgClassType = {};
   dir: Direction = 'ltr';
 
   constructor(
     private ngZone: NgZone,
     private cdr: ChangeDetectorRef,
-    @Optional() private directionality: Directionality,
+    private directionality: Directionality,
     private destroy$: NzDestroyService
-  ) {
-    this.setClassMap();
-  }
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.nzStartIndex || changes.nzDirection || changes.nzStatus || changes.nzCurrent || changes.nzSize) {
       this.updateChildrenSteps();
-    }
-    if (changes.nzDirection || changes.nzProgressDot || changes.nzLabelPlacement || changes.nzSize) {
-      this.setClassMap();
     }
   }
 
   ngOnInit(): void {
     this.directionality.change?.pipe(takeUntil(this.destroy$)).subscribe((direction: Direction) => {
       this.dir = direction;
-      this.setClassMap();
       this.cdr.detectChanges();
     });
 
     this.dir = this.directionality.value;
-    this.setClassMap();
     this.updateChildrenSteps();
   }
 
@@ -124,7 +123,6 @@ export class NzStepsComponent implements OnChanges, OnInit, AfterContentInit {
   private updateHostProgressClass(): void {
     if (this.steps && !this.showProcessDot) {
       this.showProgress = !!this.steps.toArray().find(step => step.nzPercentage !== null);
-      this.setClassMap();
     }
   }
 
@@ -156,19 +154,5 @@ export class NzStepsComponent implements OnChanges, OnInit, AfterContentInit {
           }
         });
     }
-  }
-
-  private setClassMap(): void {
-    this.classMap = {
-      [`ant-steps-${this.nzDirection}`]: true,
-      [`ant-steps-label-horizontal`]: this.nzDirection === 'horizontal',
-      [`ant-steps-label-vertical`]:
-        (this.showProcessDot || this.nzLabelPlacement === 'vertical') && this.nzDirection === 'horizontal',
-      [`ant-steps-dot`]: this.showProcessDot,
-      ['ant-steps-small']: this.nzSize === 'small',
-      ['ant-steps-navigation']: this.nzType === 'navigation',
-      ['ant-steps-rtl']: this.dir === 'rtl',
-      ['ant-steps-with-progress']: this.showProgress
-    };
   }
 }

@@ -1,0 +1,23 @@
+# This is a basic workflow to help you get started with Actions
+name: buildDeploy
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches:
+      - 'staging'
+
+concurrency:
+  group: ${{ github.repository }}
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  buildDeploy:
+    uses: cloudstaff-apps/github-actions/.github/workflows/npmbuildS3Deploy.yml@main
+    secrets: inherit
+    with:
+      accountname: nonprod
+      environment: stage
+      servicename: design
+      npm_version: '16'
+      build_src: 'dist/browser/.'
+      build: npm install && npm run build
